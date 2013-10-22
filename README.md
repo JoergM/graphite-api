@@ -1,13 +1,12 @@
 # graphite-api
 
-A Clojure library designed to ... well, that part is up to you.
+A Library to access Graphite-Data from Clojure.
+Not yet usable.
 
 ## Usage
 
-FIXME
-
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Joerg Mueller
 
 Distributed under the Eclipse Public License, the same as Clojure.
