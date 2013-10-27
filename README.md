@@ -1,6 +1,6 @@
 # graphite-api
 
-A Library to access Graphite-Data from Clojure.
+A Library to access Graphite data from Clojure.
 Not yet usable.
 
 ## Usage

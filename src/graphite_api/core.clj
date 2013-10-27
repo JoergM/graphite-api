@@ -1,4 +1,5 @@
-(ns graphite-api.core)
+(ns graphite-api.core
+  (:require [clj-http.client :as client]))
 
 (defmacro urlencode [param] `(java.net.URLEncoder/encode (str ~param)))
 
@@ -11,3 +12,6 @@
                       (urlencode (val %)))
                 parameter-map))))
 
+
+(defn get-server-response [url]
+  (:body (client/get url)))
