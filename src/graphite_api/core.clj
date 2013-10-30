@@ -15,3 +15,8 @@
 
 (defn get-server-response [url]
   (:body (client/get url)))
+
+(defn load-data
+  [data-key & {:keys [server port]
+               :or {server "localhost" port "2003"}}]
+  (str server port data-key))
