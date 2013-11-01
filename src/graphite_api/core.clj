@@ -1,5 +1,6 @@
 (ns graphite-api.core
-  (:require [clj-http.client :as client]))
+  (:require [clj-http.client :as client]
+            [clojure.data.json :as json]))
 
 (defmacro urlencode [param] `(java.net.URLEncoder/encode (str ~param)))
 
@@ -12,11 +13,15 @@
                       (urlencode (val %)))
                 parameter-map))))
 
+(defn build-full-url [server port parameter-map]
+  (str "http://" server ":" port "/render" (build-query-string parameter-map)))
 
 (defn get-server-response [url]
   (:body (client/get url)))
 
 (defn load-data
-  [data-key & {:keys [server port]
-               :or {server "localhost" port "2003"}}]
-  (str server port data-key))
+  [data-key & {:keys [host port]
+               :or {host "localhost" port "80"}}]
+  (-> (build-full-url host port {:target data-key :format "json"})
+      get-server-response
+      json/read-str))
