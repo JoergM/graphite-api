@@ -25,3 +25,5 @@
   (-> (build-full-url host port {:target data-key :format "json"})
       get-server-response
       json/read-str))
+
+;; next try with some data and convert data-information to real date and to map-key
