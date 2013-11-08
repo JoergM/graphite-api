@@ -1,8 +1,11 @@
 (ns graphite-api.core
   (:require [clj-http.client :as client]
-            [clojure.data.json :as json])
+            [clojure.data.json :as json]
+            [clj-time.format :refer [formatter unparse]]
+            [clj-time.core :refer [date-time]])
   (:import (java.net Socket)
-           (java.util Date)))
+           (java.util Date)
+           (java.text SimpleDateFormat)))
 
 ;; loading logic
 (defmacro urlencode [param] `(java.net.URLEncoder/encode (str ~param)))
@@ -28,6 +31,11 @@
 (defn- convert-dates [array]
   (map #(vector (first %) (Date. (* 1000 (second %)))) array))
 
+(def date-formatter (SimpleDateFormat. "HH:mm_YYMMDD"))
+
+(defn- date-in-at-format [^Date date]
+  (.format date-formatter date))
+
 (defn load-data
   "Returns the data stored in graphite as a vector of tuples.
   Removes elements where values are nil."
@@ -41,7 +49,7 @@
       filter-nil-tuples
       convert-dates))
 
-;; next add parameters for data-range
+;; next add parameters for date-range
 
 ;; sending logic
 (defn- build-message [^String key
