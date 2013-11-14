@@ -1,8 +1,6 @@
 (ns graphite-api.core
   (:require [clj-http.client :as client]
-            [clojure.data.json :as json]
-            [clj-time.format :refer [formatter unparse]]
-            [clj-time.core :refer [date-time]])
+            [clojure.data.json :as json])
   (:import (java.net Socket)
            (java.util Date)
            (java.text SimpleDateFormat)))
@@ -31,6 +29,11 @@
 (defn- convert-dates [array]
   (map #(vector (first %) (Date. (* 1000 (second %)))) array))
 
+(defn assoc-non-nil [m k v]
+  (if (not (nil? v))
+    (assoc m k v)
+    m))
+
 (def date-formatter (SimpleDateFormat. "HH:mm_YYMMDD"))
 
 (defn- date-in-at-format [^Date date]
@@ -39,15 +42,18 @@
 (defn load-data
   "Returns the data stored in graphite as a vector of tuples.
   Removes elements where values are nil."
-  [data-key & {:keys [host port]
+  [data-key & {:keys [host port from until]
                :or {host "localhost" port "80"}}]
-  (-> (build-full-url host port {:target data-key :format "json"})
-      get-server-response
-      json/read-str
-      (get 0)
-      (get "datapoints")
-      filter-nil-tuples
-      convert-dates))
+  (let [params {:target data-key :format "json"}
+        params (assoc-non-nil params :from from)
+        params (assoc-non-nil params :until until)]
+    (-> (build-full-url host port params)
+        get-server-response
+        json/read-str
+        (get 0)
+        (get "datapoints")
+        filter-nil-tuples
+        convert-dates)))
 
 ;; next add parameters for date-range
 
